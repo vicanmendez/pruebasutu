@@ -1,9 +1,23 @@
 <?php
-function scrappe($search, $order, $auction, $buy_it_now, $condition)
-{
+function ebayScrappe($search, $order='', $auction, $buy_it_now, $condition=''){
     // Prepare the URL based on the provided parameters
-    $url = 'https://www.ebay.com/sch/i.html?_from=R40&_nkw=' . urlencode($search) . '&_sacat=0&_sop=' . $order;
+    $url = 'https://www.ebay.com/sch/i.html?_from=R40&_nkw=' . urlencode($search);
 
+    if ($order != '') {
+        if ($order === 'price-asc') {
+           $url  .= '&_sacat=0&_sop=15';
+        } elseif ($order === 'price-desc') {
+            $url .= '&_sacat=0&_sop=16';
+        } elseif ($order === 'ending-soonest'){
+            $url .= '&_sacat=0&_sop=1';
+        } elseif ($order === 'most-recent'){
+            $url .= '&_sacat=0&_sop=10';
+        } elseif ($order === 'nearest') {
+            $url .= '&_sacat=0&_sop=7';
+        }
+    }
+
+    
     // Add filters to the URL if they are provided
     if ($auction=== '1') {
         $url .= '&LH_Auction=1';
@@ -12,10 +26,25 @@ function scrappe($search, $order, $auction, $buy_it_now, $condition)
         $url .= '&LH_BIN=1';
     }
     if ($condition !== '') {
+        if($condition === 'new') { 
+            $condition = '1000';
+        } elseif($condition==='openbox') {
+            $condition = '1500';
+        }elseif($condition === 'used') {
+            $condition = '3000';
+        }elseif($condition === 'excellent') {
+            $condition = '2010';
+        } elseif($condition === 'very_good') {
+            $condition = '2020';
+        } elseif($condition === 'good') {
+            $condition = '2030';
+        } elseif($condition === 'for_parts') {
+            $condition = '7000';
+        }
         $url .= '&LH_ItemCondition=' . $condition;
     }
 
-    var_dump($url);
+    //var_dump($url);
     // Fetch the HTML content of the eBay page
     $html = file_get_contents($url);
 
@@ -35,7 +64,6 @@ function scrappe($search, $order, $auction, $buy_it_now, $condition)
     $images = $xpath->query("//div[@class='s-item__image-wrapper image-treatment']");
     $links = $xpath->query("//a[contains(@class, 's-item__link')]");
     $prices = $xpath->query("//span[@class='s-item__price']");
-    var_dump($links[0]->getAttribute('href'));
     // Iterate over the extracted data and populate the products array
     for ($i = 0; $i < $titles->length; $i++) {
         $product = [
@@ -47,6 +75,15 @@ function scrappe($search, $order, $auction, $buy_it_now, $condition)
 
         $products[] = $product;
     }
+
+    /*
+    foreach ($products as $product) {
+        echo 'product:' . $product['title'] . '<br>';
+        echo 'price: ' . $product['price'] . '<br>';
+        echo 'link:' . $product['link'] . '<br>';
+        echo 'Imagen: ' . $product['image'] . '<br>';
+    }
+    */
     
     //If the href atribute of the first link of the array starts with 'https://ebay.com/itm/123456?' then it is a demo element and we have to remove this product from the list
     /*
@@ -54,6 +91,7 @@ function scrappe($search, $order, $auction, $buy_it_now, $condition)
         array_shift($products);
     } */
 
+    // Return the scraped product data as JSON
     return $products;
 }
 
