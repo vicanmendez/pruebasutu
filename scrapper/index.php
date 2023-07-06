@@ -2,28 +2,19 @@
 <?php
 
 // Function to scrape product data from eBay
-function scrapeFromEbay($search, $order='', $auction='', $buy_it_now='', $condition='')
+function scrapeFromEbay($search, $order='', $auction='', $buy_it_now='', $condition='', $page=1)
 {
     // Call eBay scrapping logic
     require_once '../pages/ebay.php';
-    $products = ebayScrappe($search, $order, $auction, $buy_it_now, $condition);
+    $products = ebayScrappe($search, $order, $auction, $buy_it_now, $condition, $page);
     return $products;
 }
 
 // Function to scrape product data from Amazon
-function scrapeFromAmazon($search, $order){
+function scrapeFromAmazon($search, $order, $condition='', $page=1){
     // Your Amazon scraping logic here
     require_once '../pages/amazon.php';
-    $products = amazonScrappe($search, $order);
-    // Dummy data for demonstration purposes
-    /*
-    $products = [
-        ['title' => 'Product 3', 'price' => 15.99, 'url' => 'https://www.amazon.com/product3'],
-        ['title' => 'Product 4', 'price' => 24.99, 'url' => 'https://www.amazon.com/product4'],
-        // Add more products as needed
-    ];
-    */
-    
+    $products = amazonScrappe($search, $order, $condition, $page);
     return $products;
 }
 
@@ -48,21 +39,23 @@ function handleScrapperEndpoint()
     // Check if the request method is GET
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         // Extract the parameters from the query string
-        $page = $_GET['page'] ?? '';
+        $site = $_GET['site'] ?? '';
         $search = $_GET['search'] ?? '';
         $order = $_GET['order'] ?? '';
         $auction = $_GET['auction'] ?? '';
         $buy_it_now = $_GET['buy_it_now'] ?? '';
         $condition = $_GET['condition'] ?? '';
+        $page = $_GET['page'] ?? 1;
+
         //remove spaces from search field
        //$search = str_replace(' ', '+', $search);
         // Perform scraping based on the requested page
-        switch ($page) {
+        switch ($site) {
             case 'ebay':
-                $products = scrapeFromEbay($search, $order, $auction, $buy_it_now, $condition);
+                $products = scrapeFromEbay($search, $order, $auction, $buy_it_now, $condition, $page);
                 break;
             case 'amazon':
-                $products = scrapeFromAmazon($search, $order);
+                $products = scrapeFromAmazon($search, $order, $condition, $page);
                 break;
             case 'mercadolibre':
                 $products = scrapeFromMercadoLibreUruguay($search, $order, $filters);
@@ -76,14 +69,7 @@ function handleScrapperEndpoint()
 
         // Return the scraped product data as JSON response
         echo json_encode($products);
-        /*
-        foreach ($products as $product) {
-            echo 'product:' . $product['title'];
-            echo 'price: ' . $product['price'];
-            echo 'link:' . $product['link'];
-            echo 'Imagen: ' . $product['image'];
-        }
-        */
+   
     } else {
         // Invalid request method
             http_response_code(405);

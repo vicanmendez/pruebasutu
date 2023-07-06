@@ -1,7 +1,7 @@
 <?php
 
-function amazonScrappe($search, $order='') {
-    $url = "https://www.amazon.com/s?k=" . $search;
+function amazonScrappe($search, $order='', $condition='', $page=1) {
+    $url = "https://www.amazon.com/s?k=" . urlencode($search);
     if ($order != '' ) {
         if ($order === 'price-asc') {
             $url  .= '&s=price-asc-rank';
@@ -14,7 +14,19 @@ function amazonScrappe($search, $order='') {
          }
     }
 
-    var_dump($url);
+    if ($condition != '') {
+        if ($condition === 'new') {
+            $url .= '&rh=p_n_condition-type%3A2224366011';
+        } elseif ($condition === 'used') {
+            $url .= '&rh=p_n_condition-type%3A2224368011';
+        }
+    }
+    
+    if ($page !== 1) {
+        $url .= '&page='.$page.'&ref=sr_pg_' . $page-1;
+    }
+
+   // var_dump($url);
 
     $html = file_get_contents($url);
 
@@ -26,6 +38,10 @@ function amazonScrappe($search, $order='') {
     // Create an XPath object to query the DOM
     $xpath = new DOMXPath($dom);
 
+    $total_pages = $xpath->query("//span[@class='s-pagination-item s-pagination-disabled']");
+    #get the value contained within the first span of the DOMNOdeList total_pages
+    $total_pages = ($total_pages[0]) ? intval($total_pages[0]->textContent) : null;
+    var_dump($total_pages);
     // Initialize an array to store the scraped product data
     $products = [];
 
@@ -52,7 +68,12 @@ function amazonScrappe($search, $order='') {
          $products[] = $product;
     }
 
-
+    if($total_pages > 1) {
+        return array(
+            'products' => $products,
+            'total_pages' => $total_pages
+        );
+    }
     return $products;
 
 }

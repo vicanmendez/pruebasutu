@@ -1,5 +1,5 @@
 <?php
-function ebayScrappe($search, $order='', $auction, $buy_it_now, $condition=''){
+function ebayScrappe($search, $order='', $auction, $buy_it_now, $condition='', $page=1){
     // Prepare the URL based on the provided parameters
     $url = 'https://www.ebay.com/sch/i.html?_from=R40&_nkw=' . urlencode($search);
 
@@ -44,7 +44,12 @@ function ebayScrappe($search, $order='', $auction, $buy_it_now, $condition=''){
         $url .= '&LH_ItemCondition=' . $condition;
     }
 
-    //var_dump($url);
+    // Add the page parameter to the URL if it is provided
+    if ($page > 1) {
+        $url .= '&_pgn=' . $page;
+    }
+
+    var_dump($url);
     // Fetch the HTML content of the eBay page
     $html = file_get_contents($url);
 
@@ -76,22 +81,7 @@ function ebayScrappe($search, $order='', $auction, $buy_it_now, $condition=''){
         $products[] = $product;
     }
 
-    /*
-    foreach ($products as $product) {
-        echo 'product:' . $product['title'] . '<br>';
-        echo 'price: ' . $product['price'] . '<br>';
-        echo 'link:' . $product['link'] . '<br>';
-        echo 'Imagen: ' . $product['image'] . '<br>';
-    }
-    */
-    
-    //If the href atribute of the first link of the array starts with 'https://ebay.com/itm/123456?' then it is a demo element and we have to remove this product from the list
-    /*
-    if (substr($products[0]['link'], 0, 31) === 'https://www.ebay.com/itm/123456') {
-        array_shift($products);
-    } */
 
-    // Return the scraped product data as JSON
     return $products;
 }
 
