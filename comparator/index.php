@@ -34,27 +34,7 @@ function handleComparatorEndpoint() {
             }
         }
     }
-     //si no se pide una lista de paginas, al menos escaneamos la pagina solicitada
-    else {
-        $page = isset($_GET['page']) ? $_GET['page'] : '';
-        switch ($page) {
-            case 'ebay':
-                require_once '../pages/ebay.php';
-                $ebayProducts = ebayScrappe($search, $order, $auction, $buy_it_now, $condition);
-                echo json_encode($ebayProducts);
-                break;
-            case 'amazon':
-                require_once '../pages/amazon.php';
-                $amazonProducts = amazonScrappe($search, $order, $filters);
-                echo json_encode($amazonProducts);
-                break;
-            case 'mercadolibre':
-                require_once '../pages/mercadolibre.php';
-                $mercadolibreProducts = mercadolibreScrappe($search, $order, $filters);
-                echo json_encode($mercadolibreProducts);
-                break;
-        }
-    }
+     
 }
 
 handleComparatorEndpoint();
