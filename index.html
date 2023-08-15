@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de backend de scrapping </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container md-5 center">
+        <h1> Traemos datos de una API de precios </h1>
+        <p> Ingresa el nombre de un producto que deseas buscar (Ej: PlayStation) </p>
+        <input type="text" class="form-control" id="search" name="search" placeholder="PlayStation">
+        <p> Selecciona una página de la que extraer los precios: </p>
+        <select class="form-select" aria-label="Default select example" id="pages" name="pages">
+            <option value="">Selecciona una opción</option>
+            <option value="ebay">eBay</option>
+            <option value="amazon"> Amazon</option>
+            <option value="mercadolibre">Mercado Libre Uruguay</option>
+        </select>   
+        <p> Seleccione el tipo de ordenamiento del que quieras traer los datos </p>
+        <select class="form-select" aria-label="Default select example" id="order" name="order">
+
+        </select>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    <script>
+       
+        $("#pages").change(function(){
+            var pages = $(this).val();
+            $.ajax({
+                url: "getOrder.php",
+                data: {page: pages},
+                type: "POST",
+                dataType: "json",
+                success: function(data){
+                    let select = '<option value="">Selecciona una opción</option>';
+                    for(var i=0; i<data.length; i++){
+                        select += '<option value="'+data[i].key+'">'+data[i].value+'</option>';
+                    }
+                    console.log(select);
+                    $("#order").html(select);
+                }
+            });
+        });
+
+        $("#order").change(function() {
+            var order = $(this).val();
+            var search = $("#search").val();
+            var pages = $("#pages").val();
+            $.ajax({
+                url: "scrapper/index.php",
+                data: {site: pages, order: order, search: search},
+                type: "GET",
+                dataType: "json",
+                success: function(data){
+                    console.log(data);
+                    /*
+                    let table = '<table class="table"><thead><tr><th scope="col">Nombre</th><th scope="col">Precio</th><th scope="col">Link</th></tr></thead><tbody>';
+                    for(var i=0; i<data.length; i++){
+                        table += '<tr><td>'+data[i].name+'</td><td>'+data[i].price+'</td><td>'+data[i].link+'</td></tr>';
+                    }
+                    table += '</tbody></table>';
+                    console.log(table);
+                    $("#table").html(table);
+                    */
+                }, 
+                error: function(data){
+                    console.log("Hubo un error al recuperar la lista de precios");
+                }
+            });
+
+        });
+            
+
+    </script>
+
+</body>
+</html>
