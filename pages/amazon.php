@@ -26,9 +26,20 @@ function amazonScrappe($search, $order='', $condition='', $page=1) {
         $url .= '&page='.$page.'&ref=sr_pg_' . $page-1;
     }
 
-   // var_dump($url);
+    var_dump($url);
+  
 
-    $html = file_get_contents($url);
+    // Set the user-agent details
+    $opts = array(
+        'http'=>array(
+        'method'=>"GET",
+        'header'=>"User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3\r\n"
+        )
+    );
+    
+    // Create a stream context
+    $context = stream_context_create($opts);
+    $html = file_get_contents($url, false, $context);
 
 
     // Create a DOMDocument object and load the HTML
@@ -41,7 +52,7 @@ function amazonScrappe($search, $order='', $condition='', $page=1) {
     $total_pages = $xpath->query("//span[@class='s-pagination-item s-pagination-disabled']");
     #get the value contained within the first span of the DOMNOdeList total_pages
     $total_pages = ($total_pages[0]) ? intval($total_pages[0]->textContent) : null;
-    var_dump($total_pages);
+    //var_dump($total_pages);
     // Initialize an array to store the scraped product data
     $products = [];
 

@@ -19,17 +19,10 @@ function scrapeFromAmazon($search, $order, $condition='', $page=1){
 }
 
 // Function to scrape product data from MercadoLibre Uruguay
-function scrapeFromMercadoLibreUruguay($search, $order, $filters)
+function scrapeFromMercadoLibreUruguay($search, $order="", $filters="")
 {
-    // Your MercadoLibre Uruguay scraping logic here
-    
-    // Dummy data for demonstration purposes
-    $products = [
-        ['title' => 'Product 5', 'price' => 12.99, 'url' => 'https://www.mercadolibre.com.uy/product5'],
-        ['title' => 'Product 6', 'price' => 21.99, 'url' => 'https://www.mercadolibre.com.uy/product6'],
-        // Add more products as needed
-    ];
-    
+    require_once '../pages/meliuy.php';
+    $products = mercadoLibreScrappe($search, $order, $filters);
     return $products;
 }
 
@@ -58,7 +51,7 @@ function handleScrapperEndpoint()
                 $products = scrapeFromAmazon($search, $order, $condition, $page);
                 break;
             case 'mercadolibre':
-                $products = scrapeFromMercadoLibreUruguay($search, $order, $filters);
+                $products = scrapeFromMercadoLibreUruguay($search, $order);
                 break;
             default:
                 // Invalid page requested

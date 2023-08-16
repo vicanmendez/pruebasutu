@@ -27,7 +27,7 @@ function handleComparatorEndpoint() {
                     echo json_encode($amazonProducts);
                     break;
                 case 'mercadolibre':
-                    require_once '../pages/mercadolibre.php';
+                    require_once '../pages/meliuy.php';
                     $mercadolibreProducts = mercadolibreScrappe($search, $order, $filters);
                     echo json_encode($mercadolibreProducts);
                     break;

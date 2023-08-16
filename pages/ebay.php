@@ -49,7 +49,6 @@ function ebayScrappe($search, $order='', $auction, $buy_it_now, $condition='', $
         $url .= '&_pgn=' . $page;
     }
 
-    var_dump($url);
     // Fetch the HTML content of the eBay page
     $html = file_get_contents($url);
 
@@ -81,6 +80,8 @@ function ebayScrappe($search, $order='', $auction, $buy_it_now, $condition='', $
         $products[] = $product;
     }
 
+    //remove the first product because it is an ad
+    array_shift($products);
 
     return $products;
 }

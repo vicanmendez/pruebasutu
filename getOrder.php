@@ -47,6 +47,23 @@
                 ];
                 echo json_encode($array_search);
                 break;
+            case 'mercadolibre':
+                $array_search = [
+                    [
+                    "key" => "price-asc",
+                    "value" => "precio ascendente"
+                    ],
+                    [
+                    "key" => "price-desc",
+                    "value" => "precio descendente"
+                    ],
+                    [
+                    "key" => "most-relevant",
+                    "value" => "más relevante"
+                    ]
+                ];
+                echo json_encode($array_search);
+                break;
            default:
                 $array_search = [
                     [

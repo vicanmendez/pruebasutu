@@ -22,7 +22,11 @@
         <select class="form-select" aria-label="Default select example" id="order" name="order">
 
         </select>
-    </div>
+     </div>
+
+        <div class="container md-5 center">
+            <div id="table">
+            </div>
 
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"> </script>
@@ -41,11 +45,16 @@
                     for(var i=0; i<data.length; i++){
                         select += '<option value="'+data[i].key+'">'+data[i].value+'</option>';
                     }
-                    console.log(select);
+                    //console.log(select);
                     $("#order").html(select);
+                },
+                error: function(data){
+                    console.log("Hubo un error al recuperar la lista de ordenamiento");
                 }
             });
         });
+
+
 
         $("#order").change(function() {
             var order = $(this).val();
@@ -58,18 +67,19 @@
                 dataType: "json",
                 success: function(data){
                     console.log(data);
-                    /*
+                    
                     let table = '<table class="table"><thead><tr><th scope="col">Nombre</th><th scope="col">Precio</th><th scope="col">Link</th></tr></thead><tbody>';
                     for(var i=0; i<data.length; i++){
-                        table += '<tr><td>'+data[i].name+'</td><td>'+data[i].price+'</td><td>'+data[i].link+'</td></tr>';
+                        table += '<tr><td>'+data[i].title+'</td><td>'+data[i].price+'</td><td> <a href="'+data[i].link+'"> Visitar </a> </td></tr>';
                     }
                     table += '</tbody></table>';
                     console.log(table);
                     $("#table").html(table);
-                    */
+                    
                 }, 
                 error: function(data){
                     console.log("Hubo un error al recuperar la lista de precios");
+                    $("#table").html("Hubo un error al recuperar la lista de precios (server no responde)");
                 }
             });
 
