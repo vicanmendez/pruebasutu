@@ -5,8 +5,6 @@ function mercadoLibreScrappe($search, $order="", $filters=""){
 
     $html = file_get_contents($url);
 
-    file_put_contents("meli.txt", $html);
-
     // Create a DOMDocument object and load the HTML
     $dom = new DOMDocument();
     @$dom->loadHTML($html);
